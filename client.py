@@ -45,7 +45,7 @@ def validate_ip(s):
 def main():
     serverIP = ''
     flooderIP = ''
-    print('Usage: start <flooder IP> <server IP>')
+    print('Usage: start <server IP> <flooder IP>')
     while True:
         x = input(">>>")
         parsed = x.split()
