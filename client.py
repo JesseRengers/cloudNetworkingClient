@@ -7,13 +7,12 @@
 import time 
 import csv
 import requests
-import sys, getopt
 from icmplib import ping
             
-#instruct flooder to start flooding <address> for <duration> seconds
-def instruct_flooder(address,duration):
+#instruct flooder to start flooding <address> for <duration> seconds after <offset> seconds
+def instruct_flooder(address,offset, duration):
     url = 'https://'+address+'/flooder/'
-    myobj = {'key': 'ditiseensoortwachtwoord','duration':duration}
+    myobj = {'key': 'ditiseensoortwachtwoord', 'offset': offset, 'duration':duration}
     x = requests.post(url, data = myobj)
     assert x.status_code == 200, "flooder can not be reached"
  
@@ -58,7 +57,10 @@ def main():
                 if validate_ip(parsed[1]) & validate_ip(parsed[2]): 
                     serverIP = parsed[1]
                     flooderIP = parsed[2]
-                    get_rtt(serverIP,5)
+
+                    #instruct flooder to flood for 2 seconds after 3 seconds
+                    instruct_flooder(flooderIP,3,2)
+                    get_rtt(serverIP,7)
 
 if __name__ == "__main__":
     main()
