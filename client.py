@@ -8,6 +8,7 @@ import time
 import csv
 import requests
 from icmplib import ping
+import matplotlib.pyplot as plt
             
 #instruct flooder to start flooding <address> for <duration> seconds after <offset> seconds
 def instruct_flooder(address,offset, duration,sink_ip,sink_port,packet_size):
@@ -20,18 +21,34 @@ def instruct_flooder(address,offset, duration,sink_ip,sink_port,packet_size):
         "packet_size": packet_size}
     x = requests.post(url, data = params)
     assert x.status_code == 200, "flooder can not be reached"
+
+def draw_plot(filename):
+    #x = []
+    y = []
+    with open('ping_'+filename+'.csv',mode='r') as file:
+        reader = csv.reader(file,delimiter=',')
+        
+        for row in reader:
+            #x.append(row[1])
+            y.append(float(row[0]))
+
+    fig = plt.figure()
+    plt.plot(y)
+    fig.savefig(filename+'.png', dpi=fig.dpi)
+    print('plot drawn')
+
  
 # Measure RTT using ICMP of the Server. Data gets stored in a pre-defined csv file
 def get_rtt(address,duration):
-    interval=0.5
+    interval=0.1
     count = int(duration/interval)
-    host = ping(address,count=count,interval=interval,timeout=2)
-    print(host.rtts)
+    host = ping(address,count,interval,timeout=2)
     with open('ping_'+address+'.csv',mode='w') as file:
         writer = csv.writer(file,delimiter=',',quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         for i in host.rtts:
-            writer.writerow([i,time.time()])
+            writer.writerow([i])
+    draw_plot(address)
 
 # Helper function to validate IP addresses
 def validate_ip(s):
@@ -60,7 +77,7 @@ def main():
         if parsed[0] == 'default':
             print('using default values')
             instruct_flooder('127.0.0.1',3,5,'192.168.2.13',161,50)
-            get_rtt('1.1.1.1',8)
+            get_rtt('1.1.1.1',11)
         if parsed[0] == 'start':
             if len(parsed) == 8:
                 if validate_ip(parsed[1]) & validate_ip(parsed[2]) & validate_ip(parsed[3]): 
