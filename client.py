@@ -76,8 +76,8 @@ def main():
             print('Usage: start <server IP> <flooder IP>')
         if parsed[0] == 'default':
             print('using default values')
-            instruct_flooder('127.0.0.1',3,5,'192.168.2.13',161,50)
-            get_rtt('1.1.1.1',11)
+            instruct_flooder('192.168.2.13',3,5,'192.168.2.55',161,50)
+            get_rtt('192.168.2.13',11)
         if parsed[0] == 'start':
             if len(parsed) == 8:
                 if validate_ip(parsed[1]) & validate_ip(parsed[2]) & validate_ip(parsed[3]): 
